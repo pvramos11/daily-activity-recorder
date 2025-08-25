@@ -1,0 +1,511 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login - Daily Activity Recorder</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 900px;
+      margin: auto;
+      background-color: #f0f4f8;
+    }
+
+    .form-group {
+      position: relative;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding-right: 40px;
+    }
+
+    .form-group button.mic-btn {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: #f39c12;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 5px 8px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    input, textarea, select, button {
+      margin: 5px 0;
+      padding: 8px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    .entry-form, .login-form {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .login-form {
+      width: 50%;
+      margin: 60px auto;
+      text-align: center;
+    }
+
+    .login-form input {
+      width: 90%;
+      margin: 10px auto;
+      display: block;
+    }
+
+    .login-form button {
+      width: 50%;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .login-form button:hover {
+      background-color: #2980b9;
+    }
+
+    .report-output {
+      white-space: pre-wrap;
+      background: #eef;
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 15px;
+    }
+
+    .button-group button {
+      background-color: #2ecc71;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .button-group button:hover {
+      background-color: #27ae60;
+    }
+
+    h2, h3 {
+      color: #2c3e50;
+    }
+  </style>
+</head>
+<body>
+
+<div id="loginScreen" class="login-form">
+  <h2>🔐 Login</h2>
+  <label>Username: <input type="text" id="loginUsername" /></label>
+  <label>Password: <input type="password" id="loginPassword" /></label>
+  <button onclick="login()">Login</button>
+  <div id="loginMessage" style="color:red; margin-top:10px;"></div><span id="loggedInUser"></span>
+
+</div>
+
+<div id="mainContent" style="display:none;">
+  <h2>🗓️ Daily Activity Recorder</h2>
+  <p style="font-size: 1.1em; font-weight: bold; color: #2c3e50;">
+  👤 Logged in as: <span id="dashboardUser"></span>
+</p>
+
+  <div class="entry-form">
+    
+    <button onclick="startVoiceInput()">🎙️ Speak</button>
+    
+    <label>Date: <input type="date" id="date" /></label>
+    <label>Time In: <input type="time" id="timeIn" /></label>
+    <label>Old / New:
+      <select id="oldNew">
+        <option value="Old">Old</option>
+        <option value="New">New</option>
+      </select>
+    </label>
+
+    <label><p>Account Name:</label>
+    <div class="form-group">
+      <input type="text" id="accountName" onblur="autoFillFields()" />
+      <button type="button" class="mic-btn" onclick="startVoice('accountName')">🎤</button>
+    </div>
+
+    <label>Address:</label>
+    <div class="form-group">
+      <input type="text" id="address" />
+      <button type="button" class="mic-btn" onclick="startVoice('address')">🎤</button>
+    </div>
+
+    <label>End-user:</label>
+    <div class="form-group">
+      <input type="text" id="endUser" />
+      <button type="button" class="mic-btn" onclick="startVoice('endUser')">🎤</button>
+    </div>
+
+    <label>Contact Person:</label>
+    <div class="form-group">
+      <input type="text" id="contactPerson" />
+      <button type="button" class="mic-btn" onclick="startVoice('contactPerson')">🎤</button>
+    </div>
+
+    <label>Contact Number:</label>
+    <div class="form-group">
+      <input type="text" id="contactNumber" />
+      <button type="button" class="mic-btn" onclick="startVoice('contactNumber')">🎤</button>
+    </div>
+
+    <label>Purpose of Visit:</label>
+    <div class="form-group">
+      <textarea id="purpose"></textarea>
+      <button type="button" class="mic-btn" onclick="startVoice('purpose')">🎤</button>
+    </div>
+
+    <label>Challenges and Observations:</label>
+    <div class="form-group">
+      <textarea id="challenges"></textarea>
+      <button type="button" class="mic-btn" onclick="startVoice('challenges')">🎤</button>
+    </div>
+
+    <label>Remarks:</label>
+    <div class="form-group">
+      <textarea id="remarks"></textarea>
+      <button type="button" class="mic-btn" onclick="startVoice('remarks')">🎤</button>
+    </div>
+
+    <label>Time Out: <input type="time" id="timeOut" /></label>
+    <div style="display: flex; justify-content: flex-end; gap: 10px;">
+  <button onclick="addEntry()">Add Entry</button>
+  <button onclick="logout()" style="background-color: #e74c3c; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">Logout</button>
+</div>
+  
+
+  <h3>📋 Activities for the Day</h3>
+  <label>Select Date to View: <input type="date" id="viewDate" onchange="generateReport()" /></label>
+  <div class="report-output" id="reportOutput"></div>
+
+  <div class="button-group">
+    <button onclick="copyReport()">📋 Copy to Clipboard</button>
+    <button onclick="emailReport()">✉️ Send via Email</button>
+  </div>
+</div>
+
+<script>
+  const users = {
+    "Patrick": "$P1d3r11",
+    "Jake": "Tigno",
+    "Fe": "Password"
+  };
+
+  const activities = JSON.parse(localStorage.getItem("activities") || "{}");
+  const accountDetails = JSON.parse(localStorage.getItem("accountDetails") || "{}");
+
+  function login() {
+    const username = document.getElementById("loginUsername").value.trim();
+    const password = document.getElementById("loginPassword").value.trim();
+    if (users[username] && users[username] === password) {
+      localStorage.setItem("loggedInUser", username);
+      showMainContent(username);
+    } else {
+      document.getElementById("loginMessage").textContent = "Invalid username or password.";
+    }
+  }
+
+  function showMainContent(username) {
+    document.getElementById("loginScreen").style.display = "none";
+    document.getElementById("mainContent").style.display = "block";
+    document.getElementById("loggedInUser").textContent = username;
+    document.getElementById("dashboardUser").textContent = username;
+  
+  }
+    
+  function logout() {
+    localStorage.removeItem("loggedInUser"); // Clear the saved user
+    // Hide main content
+    document.getElementById("mainContent").style.display = "none";
+    // Show login screen
+    document.getElementById("loginScreen").style.display = "block";
+    // Clear login fields
+    document.getElementById("loginUsername").value = "";
+    document.getElementById("loginPassword").value = "";
+    document.getElementById("loginMessage").textContent = "";
+    // Clear dashboard username
+    document.getElementById("dashboardUser").textContent = "";
+    clearFormFields(); 
+  }
+
+  function autoFillFields() {
+    const name = document.getElementById("accountName").value.trim();
+    if (accountDetails[name]) {
+      document.getElementById("address").value = accountDetails[name].address || "";
+      document.getElementById("contactPerson").value = accountDetails[name].contactPerson || "";
+      document.getElementById("contactNumber").value = accountDetails[name].contactNumber || "";
+    }
+  }
+
+  function addEntry() {
+    const username = localStorage.getItem("loggedInUser");
+    const entry = {
+      userName: username,
+      date: document.getElementById("date").value,
+      timeIn: document.getElementById("timeIn").value,
+      accountName: document.getElementById("accountName").value.trim(),
+      address: document.getElementById("address").value,
+      endUser: document.getElementById("endUser").value,
+      oldNew: document.getElementById("oldNew").value,
+      contactPerson: document.getElementById("contactPerson").value,
+      contactNumber: document.getElementById("contactNumber").value,
+      purpose: document.getElementById("purpose").value,
+      challenges: document.getElementById("challenges").value,
+      remarks: document.getElementById("remarks").value,
+      timeOut: document.getElementById("timeOut").value
+    };
+
+    if (!activities[entry.date]) activities[entry.date] = [];
+    activities[entry.date].push(entry);
+
+    if (!accountDetails[entry.accountName]) {
+      accountDetails[entry.accountName] = {
+        address: entry.address,
+        contactPerson: entry.contactPerson,
+        contactNumber: entry.contactNumber
+      };
+    }
+
+    localStorage.setItem("activities", JSON.stringify(activities));
+    localStorage.setItem("accountDetails", JSON.stringify(accountDetails));
+    alert("Entry added successfully!");
+  }
+
+  function generateReport() {
+  const selectedDate = document.getElementById("viewDate").value;
+  const reportContainer = document.getElementById("reportOutput");
+  const activities = JSON.parse(localStorage.getItem("activities") || "{}");
+
+  if (!activities[selectedDate] || activities[selectedDate].length === 0) {
+    reportContainer.textContent = "No entries found for this date.";
+    return;
+  }
+  
+    const reports = activities[selectedDate].map((entry, index) => `
+${index + 1}. User: ${entry.userName}
+   Account Name: ${entry.accountName}
+   Address: ${entry.address}
+   End-user: ${entry.endUser}
+   Old/New: ${entry.oldNew}
+   Contact Person: ${entry.contactPerson}
+   Contact Number: ${entry.contactNumber}
+   Purpose: ${entry.purpose}
+   Challenges and Observations: ${entry.challenges}
+   Remarks: ${entry.remarks}
+   Time In: ${entry.timeIn}
+   Time Out: ${entry.timeOut}
+    `.trim()).join("\n\n");
+
+    reportContainer.textContent = `Date: ${selectedDate}\n\n${reports}`;
+  }
+
+  function copyReport() {
+    const report = document.getElementById("reportOutput").textContent;
+    navigator.clipboard.writeText(report).then(() => {
+      alert("Report copied to clipboard!");
+    });
+  }
+
+  function emailReport() {
+    const selectedDate = document.getElementById("viewDate").value;
+    const report = document.getElementById("reportOutput").textContent;
+    const subject = encodeURIComponent(`Daily Activity Report – ${selectedDate}`);
+    const body = encodeURIComponent(report);
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+  }
+
+  const savedUser = localStorage.getItem("loggedInUser");
+  if (savedUser && users[savedUser]) {
+    showMainContent(savedUser);
+  }
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  function startVoice(fieldId) {
+    if (!SpeechRecognition) {
+      alert("Your browser does not support voice recognition.");
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = "en-US";
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onstart = () => {
+      const el = document.getElementById(fieldId);
+      el.placeholder = "Listening...";
+    };
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      const el = document.getElementById(fieldId);
+      if (el.tagName === "TEXTAREA" || el.tagName === "INPUT") {
+        el.value = transcript;
+        el.placeholder = "";
+      }
+    };
+
+    recognition.onerror = (event) => {
+      alert("Voice input error: " + event.error);
+    };
+
+    recognition.start();
+  }
+
+function addEntry() {
+  const username = localStorage.getItem("loggedInUser");
+  const entry = {
+    userName: username,
+    date: document.getElementById("date").value,
+    timeIn: document.getElementById("timeIn").value,
+    accountName: document.getElementById("accountName").value.trim(),
+    address: document.getElementById("address").value,
+    endUser: document.getElementById("endUser").value,
+    oldNew: document.getElementById("oldNew").value,
+    contactPerson: document.getElementById("contactPerson").value,
+    contactNumber: document.getElementById("contactNumber").value,
+    purpose: document.getElementById("purpose").value,
+    challenges: document.getElementById("challenges").value,
+    remarks: document.getElementById("remarks").value,
+    timeOut: document.getElementById("timeOut").value
+  };
+
+  const activities = JSON.parse(localStorage.getItem("activities") || "{}");
+  const accountDetails = JSON.parse(localStorage.getItem("accountDetails") || "{}");
+
+  if (!activities[entry.date]) activities[entry.date] = [];
+
+  const isDuplicate = activities[entry.date].some(
+    e => e.accountName.toLowerCase() === entry.accountName.toLowerCase()
+  );
+
+  if (isDuplicate) {
+    const proceed = confirm(
+      `⚠️ Account Name "${entry.accountName}" is already recorded on ${entry.date}.\n\nDo you want to proceed?`
+    );
+    if (!proceed) return; // stop if user says no
+  }
+
+  activities[entry.date].push(entry);
+
+  if (!accountDetails[entry.accountName]) {
+    accountDetails[entry.accountName] = {
+      address: entry.address,
+      contactPerson: entry.contactPerson,
+      contactNumber: entry.contactNumber
+    };
+  }
+
+  localStorage.setItem("activities", JSON.stringify(activities));
+  localStorage.setItem("accountDetails", JSON.stringify(accountDetails));
+  alert("✅ Entry added successfully!");
+}
+  
+function speakText(text) {
+  const synth = window.speechSynthesis;
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = "en-US";
+  synth.speak(utterance);
+}
+
+function startVoiceInput() {
+  const username = localStorage.getItem("loggedInUser") || "User";
+
+  const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+  recognition.lang = 'en-US';
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+
+  speakText("What activity do you want me to record?");
+  
+  setTimeout(() => {
+    recognition.start();
+
+    setTimeout(() => {
+      recognition.stop(); // Stop after 10 seconds max
+    }, 10000);
+
+    recognition.onresult = function(event) {
+      const transcript = event.results[0][0].transcript.toLowerCase().trim();
+      console.log("You said:", transcript);
+
+      const fields = {
+        "date": "date",
+        "time in": "timeIn",
+        "account name": "accountName",
+        "address": "address",
+        "end user": "endUser",
+        "old": "oldNew",
+        "new": "oldNew",
+        "contact person": "contactPerson",
+        "contact number": "contactNumber",
+        "purpose": "purpose",
+        "challenges": "challenges",
+        "remarks": "remarks",
+        "time out": "timeOut"
+      };
+
+      let found = false;
+
+      for (const keyword in fields) {
+        if (transcript.startsWith(keyword)) {
+          let fieldID = fields[keyword];
+          let value = transcript.replace(keyword, "").trim();
+
+          if (fieldID === "oldNew") {
+            document.getElementById(fieldID).value = keyword.charAt(0).toUpperCase() + keyword.slice(1);
+          } else {
+            document.getElementById(fieldID).value = value;
+          }
+
+          found = true;
+          break;
+        }
+      }
+
+      if (!found) {
+        alert("No matching field found. Please say something like 'Account Name: SM Megamall'");
+      }
+
+      speakText(`Thank you, ${username}`);
+    };
+
+    recognition.onerror = function(event) {
+      alert("Voice input error: " + event.error);
+    };
+  }, 1500); // Wait 3s after speaking before listening
+}
+
+</script>
+
+</body>
+</html>
