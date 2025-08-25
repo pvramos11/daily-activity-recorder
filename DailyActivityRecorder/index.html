@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - Daily Activity Recorder</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="loginScreen" class="login-form">
+  <h2>🔐 Login</h2>
+  <label>Username: <input type="text" id="loginUsername" /></label>
+  <label>Password: <input type="password" id="loginPassword" /></label>
+  <button onclick="login()">Login</button>
+  <div id="loginMessage" style="color:red; margin-top:10px;"></div>
+</div>
+
+<div id="mainContent" style="display:none;">
+  <p style="font-size: 1.1em; font-weight: bold; color: #2c3e50;">
+    👤 Logged in as: <span id="dashboardUser"></span>
+  </p>
+
+  <div class="entry-form">
+    <label>Date: <input type="date" id="date" /></label>
+    <label>Time In: <input type="time" id="timeIn" /></label>
+    <label>Old / New:
+      <select id="oldNew">
+        <option value="Old">Old</option>
+        <option value="New">New</option>
+      </select>
+    </label>
+
+    <label>Account Name:</label>
+    <div class="form-group">
+      <input type="text" id="accountName" onblur="autoFillFields()" />
+      <button type="button" class="mic-btn" onclick="startVoice('accountName')">🎤</button>
+    </div>
+
+    <label>Address:</label>
+    <div class="form-group">
+      <input type="text" id="address" />
+      <button type="button" class="mic-btn" onclick="startVoice('address')">🎤</button>
+    </div>
+
+    <label>End-user:</label>
+    <div class="form-group">
+      <input type="text" id="endUser" />
+      <button type="button" class="mic-btn" onclick="startVoice('endUser')">🎤</button>
+    </div>
+
+    <label>Contact Person:</label>
+    <div class="form-group">
+      <input type="text" id="contactPerson" />
+      <button type="button" class="mic-btn" onclick="startVoice('contactPerson')">🎤</button>
+    </div>
+
+    <label>Contact Number:</label>
+    <div class="form-group">
+      <input type="text" id="contactNumber" />
+      <button type="button" class="mic-btn" onclick="startVoice('contactNumber')">🎤</button>
+    </div>
+
+    <label>Purpose of Visit:</label>
+    <div class="form-group">
+      <textarea id="purpose"></textarea>
+      <button type="button" class="mic-btn" onclick="startVoice('purpose')">🎤</button>
+    </div>
+
+    <label>Challenges and Observations:</label>
+    <div class="form-group">
+      <textarea id="challenges"></textarea>
+      <button type="button" class="mic-btn" onclick="startVoice('challenges')">🎤</button>
+    </div>
+
+    <label>Remarks:</label>
+    <div class="form-group">
+      <textarea id="remarks"></textarea>
+      <button type="button" class="mic-btn" onclick="startVoice('remarks')">🎤</button>
+    </div>
+
+    <label>Time Out: <input type="time" id="timeOut" /></label>
+
+    <div style="display: flex; justify-content: flex-end; gap: 10px;">
+      <button onclick="addEntry()">Add Entry</button>
+      <button onclick="logout()" class="logout-btn">Logout</button>
+    </div>
+  </div>
+
+  <h3>📋 Activities for the Day</h3>
+  <label>Select Date to View: <input type="date" id="viewDate" onchange="generateReport()" /></label>
+  <div class="report-output" id="reportOutput"></div>
+
+  <div class="button-group">
+    <button onclick="copyReport()">📋 Copy to Clipboard</button>
+    <button onclick="emailReport()">✉️ Send via Email</button>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
